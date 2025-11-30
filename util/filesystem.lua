@@ -33,29 +33,23 @@ function file_exists(filename)
     end
 end
 
-function exists(file)
-    local ok, err, code = os.rename(file, file)
-    if not ok then
-        if code == 13 or code == 1 then
-            -- Permission denied, but it exists
-            return true, nil
-        end
-    end
-    return ok, err
-end
-
 function is_dir(path)
-    local ok, err = exists(path .. "/")
-    if ok == true and err == nil then
-        return true
-    else
+    local ok, _ = file_exists(path)
+    if not ok then
         return false
     end
+
+    local command = "cd " .. path
+    local handle = io.popen(command)
+    if handle == nil then
+        return false
+    end
+    local result = handle:close()
+    return result == true
 end
 
 filesystem.basename = basename
 filesystem.dirname = dirname
-filesystem.exists = exists
 filesystem.file_exists = file_exists
 filesystem.get_cwd = get_cwd
 filesystem.is_dir = is_dir
