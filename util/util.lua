@@ -19,18 +19,21 @@ util.process_bytes = conversion.process_bytes
 local filesystem = require(folderOfThisFile .. "filesystem")
 util.basename = filesystem.basename
 util.dirname = filesystem.dirname
-util.path_join = filesystem.path_join
-util.get_cwd = filesystem.get_cwd
 util.file_exists = filesystem.file_exists
-util.exists = filesystem.exists
+util.get_cwd = filesystem.get_cwd
 util.is_dir = filesystem.is_dir
+util.path_join = filesystem.path_join
 
 local json = require(folderOfThisFile .. "json")
 util.json_parse_file = json.json_parse_file
 util.json_parse_string = json.json_parse_string
 
 local network = require(folderOfThisFile .. "network")
-util.get_interface_type = network.get_interface_type
+util.darwin_interface_exists = network.darwin_interface_exists
+util.darwin_is_connected = network.darwin_is_connected
+util.get_interface_icon = network.get_interface_icon
+util.linux_interface_exists = network.linux_interface_exists
+util.linux_is_connected = network.linux_is_connected
 util.network_data_darwin = network.network_data_darwin
 util.network_data_linux = network.network_data_linux
 
