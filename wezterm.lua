@@ -1,29 +1,30 @@
-local wezterm = require "wezterm"
-local color_config = require "color-config"
+local wezterm       = require "wezterm"
+local color_config  = require "color-config"
 local config_parser = require "parse-config"
-local util = require "util.util"
-local act = wezterm.action
-local username = os.getenv('USER')
-local hostname = wezterm.hostname()
-local user_config = config_parser.get_config()
+local status_bar    = require "status-bar"
+local util          = require "util.util"
+local act           = wezterm.action
+local username      = os.getenv('USER')
+local hostname      = wezterm.hostname()
+local user_config   = config_parser.get_config()
+local full_config   = {}
 
--- wezterm.log_info(user_config)
+if wezterm.config_builder then
+    full_config = wezterm.config_builder()
+end
 
 -- Enable/disable config blocks at the top level
-config_appearance_enabled   = true
-config_color_scheme_enabled = true
-config_environment_enabled  = true
-config_fonts_enabled        = true
-config_general_enabled      = true
-config_keys_enabled         = true
-config_status_bar_enabled   = true
-config_tabs_enabled         = true
-
--- Define the configuration object
-full_config = wezterm.config_builder()
+local config_appearance_enabled   = true
+local config_color_scheme_enabled = true
+local config_environment_enabled  = true
+local config_fonts_enabled        = true
+local config_general_enabled      = true
+local config_keys_enabled         = true
+local config_status_bar_enabled   = true
+local config_tabs_enabled         = true
 
 -- General Appearance
-local config_appearance = {
+local config_appearance           = {
     enabled = config_appearance_enabled,
     bold_brightens_ansi_colors = true,
     enable_scroll_bar = true,
@@ -33,13 +34,13 @@ local config_appearance = {
     initial_rows = user_config.display.initial_rows,
     line_height = 1.0,
     native_macos_fullscreen_mode = false,
-    use_resize_increments = true,
+    use_resize_increments = false,
     window_background_opacity = user_config.display.window_background_opacity,
     window_padding = user_config.display.window_padding
 }
 
 -- Color Scheme
-local config_color_scheme = {}
+local config_color_scheme         = {}
 if user_config.display.color_scheme.enable_gradient then
     config_color_scheme = {
         enabled = config_color_scheme_enabled,
@@ -47,7 +48,7 @@ if user_config.display.color_scheme.enable_gradient then
             orientation   = "Vertical",
             interpolation = "Linear",
             blend         = "Rgb",
-            colors        = {"#0f0c29", "#302b63", "#24243e"},
+            colors        = { "#0f0c29", "#302b63", "#24243e" },
             -- colors        = {"#283b3c", "#26484a", "#215e61"},
         }
     }
@@ -71,6 +72,7 @@ local config_environment = {
     scroll_to_bottom_on_input   = true,
     scrollback_lines            = user_config.environment.scrollback_lines,
     term                        = user_config.environment.term,
+    window_decorations          = "RESIZE",
 }
 
 -- Fonts
@@ -88,7 +90,7 @@ local config_fonts = {
     font_size = user_config.display.terminal_font.size,
     font_rasterizer = "FreeType",
     font_shaper = "Harfbuzz",
-    font = wezterm.font_with_fallback{
+    font = wezterm.font_with_fallback {
         {
             family  = user_config.display.terminal_font.family,
             weight  = user_config.display.terminal_font.weight,
@@ -105,7 +107,7 @@ local config_fonts = {
             reverse       = true,
             strikethrough = true,
             invisible     = false,
-            font          = wezterm.font_with_fallback{
+            font          = wezterm.font_with_fallback {
                 {
                     family  = user_config.display.terminal_font.family,
                     weight  = user_config.display.terminal_font.weight,
@@ -156,7 +158,8 @@ local config_keys = {
             mods = user_config.keymod,
             action = wezterm.action_callback(function(window, pane)
                 local dims = pane:get_dimensions()
-                local txt = pane:get_text_from_region(0, dims.scrollback_top, 0, dims.scrollback_top + dims.scrollback_rows)
+                local txt = pane:get_text_from_region(0, dims.scrollback_top, 0,
+                    dims.scrollback_top + dims.scrollback_rows)
                 window:copy_to_clipboard(txt:match("^%s*(.-)%s*$")) -- trim leading and trailing whitespace
             end)
         },
@@ -185,7 +188,7 @@ local config_keys = {
         {
             key = "t",
             mods = user_config.keymod,
-            action=wezterm.action {
+            action = wezterm.action {
                 SpawnCommandInNewTab = {
                     cwd = wezterm.home_dir
                 }
@@ -232,9 +235,65 @@ local config_tabs = {
 
 -- Manage the status bar colorization and content
 local config_status_bar = {
+    enabled                = config_status_bar_enabled,
+    status_update_interval = user_config.status_bar.update_interval * 1000,
     wezterm.on('update-right-status', function(window, pane)
-        -- This does nothing, but serves as a placeholder
-        -- for putting things in the status bar.
+        local cwd = util.get_cwd(pane)
+        local cells = status_bar.update_status_bar(cwd)
+
+        -- The powerline < symbol
+        local LEFT_ARROW = utf8.char(0xe0b3)
+        -- The filled-in variant of the < symbol
+        local SOLID_LEFT_ARROW = utf8.char(0xe0b2)
+
+        local colors = {
+            -- "#c08fff",
+            -- "#b57aff",
+            "#aa66ff",
+            "#9e52ff",
+            "#933dff",
+            "#8729ff",
+            "#7c14ff",
+            "#7100ff",
+            "#6800eb",
+            "#5f00d6",
+            "#5600c2",
+            "#4d00ad",
+            "#440099",
+            "#3b0085",
+            "#320070",
+            "#29005c",
+            "#200047",
+            "#170033",
+            "#0e001f",
+        }
+
+        -- Foreground color for the text across the fade
+        local text_fg = "#c0c0c0"
+        -- The elements to be formatted
+        local elements = {}
+        -- How many cells have been formatted
+        local num_cells = 0
+
+        -- Translate a cell into elements
+        local function push(text, is_last)
+            local cell_no = num_cells + 1
+            table.insert(elements, { Foreground = { Color = text_fg } })
+            table.insert(elements, { Background = { Color = colors[cell_no] } })
+            table.insert(elements, { Text = "" .. text .. "" })
+            if not is_last then
+                table.insert(elements, { Foreground = { Color = colors[cell_no + 1] } })
+                table.insert(elements, { Text = SOLID_LEFT_ARROW })
+            end
+            num_cells = num_cells + 1
+        end
+
+        while #cells > 0 do
+            local cell = table.remove(cells, 1)
+            push(cell, #cells == 0)
+        end
+
+        window:set_right_status(wezterm.format(elements))
     end)
 }
 
@@ -264,12 +323,12 @@ wezterm.on("format-tab-title", function(tab, tabs, panes, config, hover, max_wid
 
     return {
         { Background = { Color = color } },
-        { Text = util.pad_string(2, 2, title)},
+        { Text = util.pad_string(2, 2, title) },
     }
 end)
 
 -- Define the different configuration blocks (sections)
-configs = {
+local configs = {
     config_appearance,
     config_color_scheme,
     config_environment,

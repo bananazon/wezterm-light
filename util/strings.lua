@@ -1,11 +1,11 @@
 local strings = {}
 
-function string_split(inputstr, sep)
+local function string_split(inputstr, sep)
     if sep == nil then
         sep = "%s"
     end
-    local t={}
-    for str in string.gmatch(inputstr, "([^"..sep.."]+)") do
+    local t = {}
+    for str in string.gmatch(inputstr, "([^" .. sep .. "]+)") do
         table.insert(t, str)
     end
     return t
@@ -13,7 +13,7 @@ end
 
 function split_lines(input)
     local lines = {}
-	for line in string.gmatch(input, "[^\r\n]+") do
+    for line in string.gmatch(input, "[^\r\n]+") do
         table.insert(lines, line)
     end
     return lines
@@ -27,7 +27,7 @@ function split_words(input)
     return parts
 end
 
-function get_plural(count, string)
+local function get_plural(count, string)
     if count == 1 then
         return string
     else
@@ -35,7 +35,7 @@ function get_plural(count, string)
     end
 end
 
-function pad_string(pad_left, pad_right, input_string)
+local function pad_string(pad_left, pad_right, input_string)
     if input_string ~= nil then
         return (" "):rep(pad_left) .. input_string .. (" "):rep(pad_right)
     else

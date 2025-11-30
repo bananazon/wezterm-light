@@ -17,10 +17,10 @@ function config_parser.get_config()
     local config = {
         display = {
             tab_bar_font = {
-                family  = "Roboto",
+                family  = "JetBrains Mono",
                 size    = 12,
                 stretch = "Normal",
-                weight  = "Bold",
+                weight  = "Regular",
             },
             terminal_font = {
                 family  = "JetBrains Mono",
@@ -32,22 +32,37 @@ function config_parser.get_config()
             initial_rows = 25,
             color_scheme = {
                 enable_gradient = false,
-                profile = "kitty",
                 randomize_color_scheme = false,
                 scheme_name = "Novel",
             },
             window_background_opacity = 1,
             window_padding = {
-                left   = 10,
-                right  = 20,
-                top    = 0,
-                bottom = 0,
+                left   = 5,
+                right  = 5,
+                top    = 5,
+                bottom = 5,
             }
         },
         environment = {
             audible_bell     = "Disabled",
             scrollback_lines = 20000,
             term             = "xterm-256color",
+        },
+        status_bar = {
+            update_interval = 3,
+            system_status = {
+                enabled = true,
+                memory_unit = "Gi",
+                network_interface_list = {},
+                toggles = {
+                    show_battery_status = true,
+                    show_clock = true,
+                    show_cpu_usage = true,
+                    show_disk_usage = true,
+                    show_memory_usage = true,
+                    show_network_throughput = true,
+                }
+            }
         },
         tabs = {
             title_is_cwd = true,
@@ -64,7 +79,7 @@ function config_parser.get_config()
     end
 
     -- Apply overrides if present
-    if util.file_exists(util.path_join({wezterm.config_dir, "overrides.lua"})) then
+    if util.file_exists(util.path_join({ wezterm.config_dir, "overrides.lua" })) then
         local overrides = require "overrides"
         config = overrides.override_config(config)
     end
