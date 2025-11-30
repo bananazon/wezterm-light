@@ -3,7 +3,7 @@ local wezterm = require "wezterm"
 local util = require "util.util"
 local disk_usage = {}
 
-local function darwin_disk_usage(config)
+function darwin_disk_usage(config)
     local disk_usage_data = {}
     local disk_list = config.status_bar.system_status.disk_list
     if disk_list ~= nil then
@@ -28,7 +28,7 @@ local function darwin_disk_usage(config)
     return nil
 end
 
-local function linux_disk_usage(config)
+function linux_disk_usage(config)
     local disk_usage_data = {}
     local disk_list = config.status_bar.system_status.disk_list
     if disk_list ~= nil then

@@ -3,7 +3,7 @@ local wezterm = require "wezterm"
 local util = require "util.util"
 local memory_usage = {}
 
-local function darwin_memory_usage(config)
+function darwin_memory_usage(config)
     local pagesize = nil
     local total = nil
     local success, stdout, stderr = wezterm.run_child_process({ "sysctl", "-n", "hw.pagesize" })
@@ -38,11 +38,11 @@ local function darwin_memory_usage(config)
     return nil
 end
 
-local function linux_memory_usage(config)
+function linux_memory_usage(config)
     local success, stdout, stderr = wezterm.run_child_process({ "free", "-b", "-w" })
     if success then
         local bytes_total, bytes_used, bytes_free, bytes_shared, bytes_buffers, bytes_cache, bytes_available = stdout
-        :match("Mem:%s+(%d+)%s+(%d+)%s+(%d+)%s+(%d+)%s+(%d+)%s+(%d+)%s+(%d+)")
+            :match("Mem:%s+(%d+)%s+(%d+)%s+(%d+)%s+(%d+)%s+(%d+)%s+(%d+)%s+(%d+)")
         local memory_unit = config["status_bar"]["system_status"]["memory_unit"]
         local usage = string.format("%s %s / %s", wezterm.nerdfonts.md_memory,
             util.byte_converter(bytes_used, memory_unit), util.byte_converter(bytes_total, memory_unit))

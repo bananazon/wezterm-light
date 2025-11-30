@@ -2,11 +2,11 @@ local wezterm = require "wezterm"
 
 local battery_status = {}
 
-local function to_int(input)
+function to_int(input)
     return math.floor(input)
 end
 
-local function get_battery_status(b)
+function get_battery_status(b)
     local icon = ""
     local icon_set = {}
     local soc = b.state_of_charge * 100

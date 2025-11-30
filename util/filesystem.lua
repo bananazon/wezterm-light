@@ -1,11 +1,11 @@
 local wezterm = require "wezterm"
 local filesystem = {}
 
-local function basename(path)
+function basename(path)
     return string.gsub(path, "(.*/)(.*)", "%2")
 end
 
-local function dirname(path)
+function dirname(path)
     return string.gsub(path, "(.*/)(.*)", "%1")
 end
 
@@ -13,7 +13,7 @@ function path_join(path_bits)
     return table.concat(path_bits, "/")
 end
 
-local function get_cwd(pane)
+function get_cwd(pane)
     local cwd_uri = pane:get_current_working_dir()
     if cwd_uri then
         local cwd = cwd_uri.file_path
@@ -33,7 +33,7 @@ function file_exists(filename)
     end
 end
 
-local function exists(file)
+function exists(file)
     local ok, err, code = os.rename(file, file)
     if not ok then
         if code == 13 or code == 1 then

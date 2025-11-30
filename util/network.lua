@@ -1,7 +1,7 @@
 local wezterm = require "wezterm"
 local network = {}
 
-local function network_data_darwin(interface)
+function network_data_darwin(interface)
     local bytes_recv = nil
     local bytes_sent = nil
     local success, stdout, stderr = wezterm.run_child_process({ "netstat", "-bi", "-I", interface })
@@ -14,7 +14,7 @@ local function network_data_darwin(interface)
     return nil, nil
 end
 
-local function network_data_linux(interface)
+function network_data_linux(interface)
     local success, stdout, stderr = wezterm.run_child_process({ "cat", "/proc/net/dev" })
     if success then
         for _, line in ipairs(split_lines(stdout)) do
@@ -27,7 +27,7 @@ local function network_data_linux(interface)
     return nil, nil
 end
 
-local function darwin_is_connected(interface)
+function darwin_is_connected(interface)
     local success, stdout, _ = wezterm.run_child_process({ "ifconfig", interface })
     if success then
         status = stdout:match("status: ([^\n]+)")
@@ -44,7 +44,7 @@ local function darwin_is_connected(interface)
     return true
 end
 
-local function darwin_get_icon(interface)
+function darwin_get_icon(interface)
     local success, stdout, _ = wezterm.run_child_process({ "networksetup", "-listallhardwareports" })
     if success then
         for port, device, address in stdout:gmatch("Hardware Port: ([^\n]+)\nDevice: ([^\n]+)\nEthernet Address: ([^\n]+)") do
@@ -68,7 +68,7 @@ local function darwin_get_icon(interface)
     return wezterm.nerdfonts.md_network
 end
 
-local function linux_is_connected(interface)
+function linux_is_connected(interface)
     local filename = path_join({ "/sys/class/net", interface, "carrier" })
     if file_exists(filename) then
         local filehandle = io.open(filename, "r")
@@ -76,7 +76,7 @@ local function linux_is_connected(interface)
     return wezterm.nerdfonts.md_network
 end
 
-local function linux_interface_exists(interface)
+function linux_interface_exists(interface)
     filename = path_join({ "/sys/class/net", interface })
     if is_dir(filename) then
         return true
@@ -84,13 +84,13 @@ local function linux_interface_exists(interface)
     return false
 end
 
-local function linux_get_icon(interface)
+function linux_get_icon(interface)
     if not linux_interface_exists(interface) then
         return wezterm.nerdfonts.md_alert
     end
 end
 
-local function get_interface_type(config, interface)
+function get_interface_type(config, interface)
     if config.os_name == "darwin" then
         return darwin_get_icon(interface)
     elseif config.os_name == "linux" then

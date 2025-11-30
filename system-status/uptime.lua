@@ -3,7 +3,7 @@ local wezterm = require "wezterm"
 local util = require "util.util"
 local uptime = {}
 
-local function darwin_uptime(config)
+function darwin_uptime(config)
     local success, stdout, stderr = wezterm.run_child_process({ "sysctl", "-n", "kern.boottime" })
     if success then
         local timestamp = stdout:match("{ sec = %d+, usec = %d+ } (%a+%s+%a+%s+%d+%s+%d+:%d+:%d+%s+%d+)")
@@ -23,7 +23,7 @@ local function darwin_uptime(config)
     return nil
 end
 
-local function linux_uptime(config)
+function linux_uptime(config)
     local success, stdout, _ = wezterm.run_child_process({ "cut", "-f1", "-d.", "/proc/uptime" })
     if success then
         local days, hours, minutes, _ = util.duration(stdout)

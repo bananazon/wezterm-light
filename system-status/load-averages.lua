@@ -3,7 +3,7 @@ local wezterm = require "wezterm"
 local util = require "util.util"
 local load_averages = {}
 
-local function darwin_load_averages(config)
+function darwin_load_averages(config)
     local success, stdout, stderr = wezterm.run_child_process({ "/usr/bin/uptime" })
     if success then
         local load1, load5, load15 = stdout:match("load averages:%s+(%d+.%d+)%s+(%d+.%d+)%s+(%d+.%d+)")
@@ -13,7 +13,7 @@ local function darwin_load_averages(config)
     return nil
 end
 
-local function linux_load_averages(config)
+function linux_load_averages(config)
     local success, stdout, stderr = wezterm.run_child_process({ "/usr/bin/uptime" })
     if success then
         local load1, load5, load15 = stdout:match("load average:%s+(%d+.%d+),%s+(%d+.%d+),%s+(%d+.%d+)")

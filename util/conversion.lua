@@ -4,7 +4,7 @@ local conversion = {}
 -- Simple byte converter
 -- Usage: foo = util.byte_converter(67108864, "Gi")
 --        foo = util.byte_converter(67108864, "M")
-local function byte_converter(bytes, unit)
+function byte_converter(bytes, unit)
     local divisor = 0
     local multiple = 0
     local suffix = "B"
@@ -34,7 +34,7 @@ local function byte_converter(bytes, unit)
     return string.format("%.2f %s%s", bytes / divisor ^ multiple, unit, suffix)
 end
 
-local function duration(delta)
+function duration(delta)
     delta = math.floor(delta)
     local days = math.floor(delta / 86400)
     local hours = math.floor(((delta - (days * 86400)) / 3600))
@@ -44,7 +44,7 @@ local function duration(delta)
     return days, hours, minutes, seconds
 end
 
-local function process_bytes(num)
+function process_bytes(num)
     local suffix = "B"
     for _, unit in ipairs({ "", "Ki", "Mi", "Gi", "Ti", "Pi", "Ei", "Zi" }) do
         if math.abs(num) < 1024.0 then

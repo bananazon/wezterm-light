@@ -10,7 +10,7 @@ local memory_usage = require(folderOfThisFile .. "memory-usage")
 local network_throughput = require(folderOfThisFile .. "network-throughput")
 local uptime = require(folderOfThisFile .. "uptime")
 
-local function get_cpu_usage(config)
+function get_cpu_usage(config)
     if config.os_name == "darwin" then
         return cpu_usage.darwin_cpu_usage(config)
     elseif config.os_name == "linux" then
@@ -18,7 +18,7 @@ local function get_cpu_usage(config)
     end
 end
 
-local function get_disk_usage(config)
+function get_disk_usage(config)
     if config.os_name == "darwin" then
         return disk_usage.darwin_disk_usage(config)
     elseif config.os_name == "linux" then
@@ -26,7 +26,7 @@ local function get_disk_usage(config)
     end
 end
 
-local function get_load_averages(config)
+function get_load_averages(config)
     if config.os_name == "darwin" then
         return load_averages.darwin_load_averages(config)
     elseif config.os_name == "linux" then
@@ -34,7 +34,7 @@ local function get_load_averages(config)
     end
 end
 
-local function get_memory_usage(config)
+function get_memory_usage(config)
     if config.os_name == "darwin" then
         return memory_usage.darwin_memory_usage(config)
     elseif config.os_name == "linux" then
@@ -42,7 +42,7 @@ local function get_memory_usage(config)
     end
 end
 
-local function get_network_throughput(config)
+function get_network_throughput(config)
     if config.os_name == "darwin" then
         return network_throughput.darwin_network_throughput(config)
     elseif config.os_name == "linux" then
@@ -50,7 +50,7 @@ local function get_network_throughput(config)
     end
 end
 
-local function get_system_uptime(config)
+function get_system_uptime(config)
     if config.os_name == "darwin" then
         return uptime.darwin_uptime(config)
     elseif config.os_name == "linux" then

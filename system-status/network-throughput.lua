@@ -3,7 +3,7 @@ local wezterm = require "wezterm"
 local util = require "util.util"
 local network_throughput = {}
 
-local function darwin_network_throughput(config)
+function darwin_network_throughput(config)
     util.get_interface_type(config, "en0")
     local network_interface_list = config.status_bar.system_status.network_interface_list
     if network_interface_list ~= nil then
@@ -21,7 +21,7 @@ local function darwin_network_throughput(config)
     end
 end
 
-local function linux_network_throughput(config)
+function linux_network_throughput(config)
     util.get_interface_type(config, "en0")
     local network_interface_list = config["status_bar"]["system_status"]["network_interface_list"]
     if network_interface_list ~= nil then

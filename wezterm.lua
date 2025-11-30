@@ -276,7 +276,7 @@ local config_status_bar = {
         local num_cells = 0
 
         -- Translate a cell into elements
-        local function push(text, is_last)
+        function push(text, is_last)
             local cell_no = num_cells + 1
             table.insert(elements, { Foreground = { Color = text_fg } })
             table.insert(elements, { Background = { Color = colors[cell_no] } })

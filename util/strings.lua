@@ -1,6 +1,6 @@
 local strings = {}
 
-local function string_split(inputstr, sep)
+function string_split(inputstr, sep)
     if sep == nil then
         sep = "%s"
     end
@@ -27,7 +27,7 @@ function split_words(input)
     return parts
 end
 
-local function get_plural(count, string)
+function get_plural(count, string)
     if count == 1 then
         return string
     else
@@ -35,7 +35,7 @@ local function get_plural(count, string)
     end
 end
 
-local function pad_string(pad_left, pad_right, input_string)
+function pad_string(pad_left, pad_right, input_string)
     if input_string ~= nil then
         return (" "):rep(pad_left) .. input_string .. (" "):rep(pad_right)
     else

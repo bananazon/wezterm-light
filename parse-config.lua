@@ -4,7 +4,7 @@ local util = require "util.util"
 local config_parser = {}
 
 -- Recursive function to convert table into "namedtuple-like" table
-local function make_namedtuple(t)
+function make_namedtuple(t)
     if type(t) ~= "table" then return t end
     local nt = {}
     for k, v in pairs(t) do

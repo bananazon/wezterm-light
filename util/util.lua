@@ -1,7 +1,7 @@
 local folderOfThisFile = (...):match("(.-)[^%.]+$")
 local util = {}
 
-local function has_value(array, value)
+function has_value(array, value)
     for _, element in ipairs(array) do
         if element == value then
             return true

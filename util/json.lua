@@ -1,12 +1,12 @@
 local wezterm = require "wezterm"
 local json = {}
 
-local function json_parse_string(input)
+function json_parse_string(input)
     local json_data = wezterm.json_parse(input)
     return json_data
 end
 
-local function json_parse_file(filename)
+function json_parse_file(filename)
     if file_exists(filename) then
         local filehandle = io.open(filename, "r")
         local json_string = ""
