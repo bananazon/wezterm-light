@@ -1,32 +1,6 @@
 local wezterm = require "wezterm"
 local network = {}
 
-function network_data_darwin(interface)
-    local bytes_recv = nil
-    local bytes_sent = nil
-    local success, stdout, stderr = wezterm.run_child_process({ "netstat", "-bi", "-I", interface })
-    if success then
-        local bits = split_words(split_lines(stdout)[2])
-        bytes_recv = bits[7]
-        bytes_sent = bits[10]
-        return bytes_recv, bytes_sent
-    end
-    return nil, nil
-end
-
-function network_data_linux(interface)
-    local success, stdout, stderr = wezterm.run_child_process({ "cat", "/proc/net/dev" })
-    if success then
-        for _, line in ipairs(split_lines(stdout)) do
-            if line:match(string.format("%s:", interface)) then
-                local bits = split_words(line)
-                return bits[2], bits[10]
-            end
-        end
-    end
-    return nil, nil
-end
-
 function darwin_interface_exists(interface)
     local success, stdout, _ = wezterm.run_child_process({ "networksetup", "-listallhardwareports" })
     if success then
@@ -60,7 +34,7 @@ function darwin_is_connected(interface)
     return true
 end
 
-function darwin_get_icon(interface)
+function darwin_interface_icon(interface)
     type, exists = darwin_interface_exists(interface)
     if exists then
         if type == "wireless" then
@@ -101,7 +75,7 @@ function linux_is_connected(interface)
     return wezterm.nerdfonts.md_network
 end
 
-function linux_get_icon(interface)
+function linux_interface_icon(interface)
     type, exists = linux_interface_exists(interface)
     if exists then
         if type == "wireless" then
@@ -121,20 +95,11 @@ function linux_get_icon(interface)
     return wezterm.nerdfonts.md_network
 end
 
-function get_interface_icon(config, interface)
-    if config.os_name == "darwin" then
-        return darwin_get_icon(interface)
-    elseif config.os_name == "linux" then
-        return linux_get_icon(interface)
-    end
-end
-
 network.darwin_interface_exists = darwin_interface_exists
+network.darwin_interface_icon = darwin_interface_icon
 network.darwin_is_connected = darwin_is_connected
-network.get_interface_icon = get_interface_icon
 network.linux_interface_exists = linux_interface_exists
+network.linux_interface_icon = linux_interface_icon
 network.linux_is_connected = linux_is_connected
-network.network_data_darwin = network_data_darwin
-network.network_data_linux = network_data_linux
 
 return network
