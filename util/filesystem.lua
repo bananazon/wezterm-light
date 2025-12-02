@@ -56,6 +56,16 @@ function is_dir(path)
     return result == true
 end
 
+function read_file(path)
+    local file = io.open(path, "r")
+    if not file then
+        return nil
+    end
+    local content = file:read("*all")
+    file:close()
+    return content
+end
+
 filesystem.basename = basename
 filesystem.dirname = dirname
 filesystem.file_exists = file_exists
