@@ -8,6 +8,8 @@ local status_bar = {}
 local config = config_parser.get_config()
 
 local system_status_config = config.status_bar.system_status
+local disk_usage_index = 1
+local network_throughput_index = 1
 
 function status_bar.update_status_bar(cwd)
     local cells = {}
@@ -18,7 +20,13 @@ function status_bar.update_status_bar(cwd)
         if system_status_config.toggles.show_network_throughput then
             local network_throughput = system_status.get_network_throughput(config)
             if network_throughput ~= nil then
-                table.insert(cells, network_throughput)
+                if network_throughput_index <= #network_throughput then
+                    table.insert(cells, network_throughput[network_throughput_index])
+                    network_throughput_index = network_throughput_index + 1
+                    if network_throughput_index > #network_throughput then
+                        network_throughput_index = 1
+                    end
+                end
             end
         end
 
@@ -26,8 +34,12 @@ function status_bar.update_status_bar(cwd)
         if system_status_config.toggles.show_disk_usage then
             local disk_usage = system_status.get_disk_usage(config)
             if disk_usage ~= nil then
-                for _, disk_usage_data in ipairs(disk_usage) do
-                    table.insert(cells, disk_usage_data)
+                if disk_usage_index <= #disk_usage then
+                    table.insert(cells, disk_usage[disk_usage_index])
+                    disk_usage_index = disk_usage_index + 1
+                    if disk_usage_index > #disk_usage then
+                        disk_usage_index = 1
+                    end
                 end
             end
         end
@@ -61,9 +73,12 @@ function status_bar.update_status_bar(cwd)
     end
 
     -- clock
-    if config.status_bar.system_status.toggles.show_clock then
-        local date = wezterm.strftime "%a %b %-d %H:%M"
-        table.insert(cells, util.pad_string(2, 2, date))
+    if config.status_bar.clock.enabled then
+        format = config.status_bar.clock.format
+        local date = os.date(config.status_bar.clock.format)
+        icon = util.get_clock_icon
+
+        table.insert(cells, util.pad_string(1, 1, util.get_clock_icon() .. " " .. date))
     end
 
     return cells
