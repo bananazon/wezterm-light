@@ -50,9 +50,14 @@ function config_parser.get_config()
         },
         status_bar = {
             update_interval = 3,
-            system_status = {
+            clock = {
                 enabled = true,
-                memory_unit = "Gi",
+                format = "%a %b %-d %H:%M",
+            },
+            system_status = {
+                disk_list = { { mountpoint = "/", unit = "auto" } },
+                enabled = true,
+                memory_unit = "auto",
                 network_interface_list = {},
                 toggles = {
                     show_battery_status = true,
@@ -73,9 +78,11 @@ function config_parser.get_config()
     if wezterm.target_triple:find("apple") then
         config.keymod = "SUPER"
         config.os_name = "darwin"
+        config.environment.window_decorations = "RESIZE"
     elseif wezterm.target_triple:find("linux") then
         config.keymod = "SHIFT|CTRL"
         config.os_name = "linux"
+        config.environment.window_decorations = "TITLE | RESIZE"
     end
 
     -- Apply overrides if present
