@@ -43,6 +43,10 @@ function pad_string(pad_left, pad_right, input_string)
     end
 end
 
+function ends_with(str, suffix)
+    return string.sub(str, -string.len(suffix)) == suffix
+end
+
 strings.get_plural = get_plural
 strings.pad_string = pad_string
 strings.split_lines = split_lines
