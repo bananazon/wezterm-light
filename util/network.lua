@@ -70,9 +70,14 @@ end
 function linux_is_connected(interface)
     local filename = path_join({ "/sys/class/net", interface, "carrier" })
     if file_exists(filename) then
-        local filehandle = io.open(filename, "r")
+        content = read_file(filename)
+        if tonumber(content) == 1 then
+            return true
+        else
+            return false
+        end
     end
-    return wezterm.nerdfonts.md_network
+    return false
 end
 
 function linux_interface_icon(interface)
