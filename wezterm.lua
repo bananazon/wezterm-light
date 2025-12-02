@@ -72,7 +72,7 @@ local config_environment = {
     scroll_to_bottom_on_input   = true,
     scrollback_lines            = user_config.environment.scrollback_lines,
     term                        = user_config.environment.term,
-    window_decorations          = "RESIZE",
+    window_decorations          = user_config.environment.window_decorations,
 }
 
 -- Fonts
@@ -229,7 +229,7 @@ local config_tabs = {
     hide_tab_bar_if_only_one_tab = false,
     show_tab_index_in_tab_bar = true,
     tab_bar_at_bottom = false,
-    tab_max_width = 8,
+    tab_max_width = 10,
     use_fancy_tab_bar = true,
 }
 
