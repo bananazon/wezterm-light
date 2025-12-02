@@ -12,49 +12,49 @@ local uptime = require(folderOfThisFile .. "uptime")
 
 function get_cpu_usage(config)
     if config.os_name == "darwin" then
-        return cpu_usage.darwin_cpu_usage(config)
+        return cpu_usage.darwin_cpu_usage()
     elseif config.os_name == "linux" then
-        return cpu_usage.linux_cpu_usage(config)
+        return cpu_usage.linux_cpu_usage()
     end
 end
 
 function get_disk_usage(config)
     if config.os_name == "darwin" then
-        return disk_usage.darwin_disk_usage(config)
+        return disk_usage.darwin_disk_usage(config.status_bar.system_status.disk_list)
     elseif config.os_name == "linux" then
-        return disk_usage.linux_disk_usage(config)
+        return disk_usage.linux_disk_usage(config.status_bar.system_status.disk_list)
     end
 end
 
 function get_load_averages(config)
     if config.os_name == "darwin" then
-        return load_averages.darwin_load_averages(config)
+        return load_averages.darwin_load_averages()
     elseif config.os_name == "linux" then
-        return load_averages.linux_load_averages(config)
+        return load_averages.linux_load_averages()
     end
 end
 
 function get_memory_usage(config)
     if config.os_name == "darwin" then
-        return memory_usage.darwin_memory_usage(config)
+        return memory_usage.darwin_memory_usage(config.status_bar.system_status.memory_unit)
     elseif config.os_name == "linux" then
-        return memory_usage.linux_memory_usage(config)
+        return memory_usage.linux_memory_usage(config.status_bar.system_status.memory_unit)
     end
 end
 
 function get_network_throughput(config)
     if config.os_name == "darwin" then
-        return network_throughput.darwin_network_throughput(config)
+        return network_throughput.darwin_network_throughput(config.status_bar.system_status.network_interface_list)
     elseif config.os_name == "linux" then
-        return network_throughput.linux_network_throughput(config)
+        return network_throughput.linux_network_throughput(config.status_bar.system_status.network_interface_list)
     end
 end
 
 function get_system_uptime(config)
     if config.os_name == "darwin" then
-        return uptime.darwin_uptime(config)
+        return uptime.darwin_uptime()
     elseif config.os_name == "linux" then
-        return uptime.linux_uptime(config)
+        return uptime.linux_uptime()
     end
 end
 

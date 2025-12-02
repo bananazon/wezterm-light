@@ -3,7 +3,7 @@ local wezterm = require "wezterm"
 local util = require "util.util"
 local memory_usage = {}
 
-function darwin_memory_usage(config)
+function darwin_memory_usage(unit)
     local pagesize = nil
     local total = nil
     local success, stdout, stderr = wezterm.run_child_process({ "sysctl", "-n", "hw.pagesize" })
@@ -29,7 +29,7 @@ function darwin_memory_usage(config)
             local bytes_used        = bytes_active + bytes_wired
             local bytes_available   = bytes_inactive + bytes_free
 
-            local memory_unit       = config["status_bar"]["system_status"]["memory_unit"]
+            local memory_unit       = unit
             local usage             = string.format("%s %s / %s", wezterm.nerdfonts.md_memory,
                 util.byte_converter(bytes_used, memory_unit), util.byte_converter(bytes_total, memory_unit))
             return util.pad_string(2, 2, usage)
@@ -38,17 +38,39 @@ function darwin_memory_usage(config)
     return nil
 end
 
-function linux_memory_usage(config)
-    local success, stdout, stderr = wezterm.run_child_process({ "free", "-b", "-w" })
+function linux_memory_usage_jc(unit)
+    local success, stdout, _ = wezterm.run_child_process({ "jc", "--pretty", "/proc/meminfo" })
+    if success then
+        meminfo = util.json_parse_string(stdout)
+        if meminfo ~= nil then
+            bytes_total = meminfo.MemTotal
+            bytes_used = meminfo.MemTotal - meminfo.MemFree - meminfo.Buffers - meminfo.Cached - meminfo.SReclaimable
+            local usage = string.format("%s %s / %s", wezterm.nerdfonts.md_memory,
+                util.byte_converter(bytes_used * 1024, unit), util.byte_converter(bytes_total * 1024, unit))
+            return util.pad_string(2, 2, usage)
+        end
+    end
+end
+
+function linux_memory_usage_no_jc(unit)
+    local success, stdout, _ = wezterm.run_child_process({ "free", "-b", "-w" })
     if success then
         local bytes_total, bytes_used, bytes_free, bytes_shared, bytes_buffers, bytes_cache, bytes_available = stdout
             :match("Mem:%s+(%d+)%s+(%d+)%s+(%d+)%s+(%d+)%s+(%d+)%s+(%d+)%s+(%d+)")
-        local memory_unit = config["status_bar"]["system_status"]["memory_unit"]
+        local memory_unit = unit
         local usage = string.format("%s %s / %s", wezterm.nerdfonts.md_memory,
             util.byte_converter(bytes_used, memory_unit), util.byte_converter(bytes_total, memory_unit))
         return util.pad_string(2, 2, usage)
     end
     return nil
+end
+
+function linux_memory_usage(unit)
+    if util.which("jc") then
+        return linux_memory_usage_jc(unit)
+    else
+        return linux_memory_usage_no_jc(unit)
+    end
 end
 
 memory_usage.darwin_memory_usage = darwin_memory_usage
