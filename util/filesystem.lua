@@ -23,6 +23,14 @@ function get_cwd(pane)
     return nil
 end
 
+function which(name)
+    local success, stdout, _ = wezterm.run_child_process({ "which", name })
+    if success then
+        return true
+    end
+    return false
+end
+
 function file_exists(filename)
     local f = io.open(filename, "r")
     if f ~= nil then
@@ -54,5 +62,6 @@ filesystem.file_exists = file_exists
 filesystem.get_cwd = get_cwd
 filesystem.is_dir = is_dir
 filesystem.path_join = path_join
+filesystem.which = which
 
 return filesystem
